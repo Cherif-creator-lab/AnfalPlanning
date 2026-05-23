@@ -261,10 +261,41 @@ async function sendValidationEmail(slot, settings) {
   
   const toHeader = recipients.join(', ');
 
-  // Vérifier si la configuration SMTP est complète
+  // Vérifier si la configuration Resend ou SMTP est complète
+  const RESEND_API_KEY = process.env.RESEND_API_KEY;
+  const useResend = EMAIL_ENABLED && RESEND_API_KEY;
   const useRealSmtp = EMAIL_ENABLED && SMTP_HOST && SMTP_USER && SMTP_PASS;
 
-  if (useRealSmtp) {
+  if (useResend) {
+    console.log(`✉️ Envoi via l'API Resend HTTPS (bypasse les blocages de ports) à : ${toHeader}`);
+    try {
+      const response = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${RESEND_API_KEY}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          from: 'Anfal Planning <onboarding@resend.dev>',
+          to: recipients,
+          subject: `✅ Créneau validé : Anfal le ${pickupDateFr}`,
+          html: htmlContent
+        })
+      });
+
+      const resData = await response.json();
+      if (!response.ok) {
+        throw new Error(resData.message || JSON.stringify(resData));
+      }
+
+      console.log(`✅ E-mail envoyé avec succès via Resend ! ID: ${resData.id}`);
+      return resData;
+    } catch (error) {
+      console.error("❌ Échec de l'envoi via l'API Resend :", error.message);
+      console.log("✏️ Basculement automatique en mode simulation.");
+      await writeToSimulation(toHeader, htmlContent, slot.id);
+    }
+  } else if (useRealSmtp) {
     console.log(`✉️ Tentative d'envoi d'e-mail réel à : ${toHeader}`);
     try {
       let transportOpts;
