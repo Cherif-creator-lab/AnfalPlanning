@@ -226,7 +226,8 @@ async function handleTelegramMessage(msg) {
 }
 
 async function handleTelegramCallback(query) {
-  const chatId = String(query.from.id);
+  const chatId = String(query.from.id); // Utilisateur qui a cliqué
+  const messageChatId = String(query.message.chat.id); // Chat (groupe ou privé) contenant le message
   const callbackData = query.data;
   const msgId = query.message.message_id;
 
@@ -300,14 +301,14 @@ async function handleTelegramCallback(query) {
       `🏫 Récupération : <b>${pickupDateFr}</b> à <b>${slot.pickupTime}</b>\n` +
       `🏠 Dépôt : <b>${sameDay ? 'Même jour' : dropoffDateFr}</b> à <b>${slot.dropoffTime}</b>\n\n` +
       `<i>Confirmé — Robot-Planning Anfal</i>`;
-    await telegram.editMessage(chatId, msgId, text);
+    await telegram.editMessage(messageChatId, msgId, text);
   } else {
     const text =
       `❌ <b>Créneau REFUSÉ</b>\n\n` +
       `🏫 Récupération : <b>${pickupDateFr}</b> à <b>${slot.pickupTime}</b>\n` +
       `🏠 Dépôt : <b>${sameDay ? 'Même jour' : dropoffDateFr}</b> à <b>${slot.dropoffTime}</b>\n\n` +
       `Souhaitez-vous proposer un autre créneau ?`;
-    await telegram.editMessageWithButtons(chatId, msgId, text, [
+    await telegram.editMessageWithButtons(messageChatId, msgId, text, [
       [{ text: '📅 Proposer un nouveau créneau', callback_data: `proposer_${slotId}` }]
     ]);
   }
