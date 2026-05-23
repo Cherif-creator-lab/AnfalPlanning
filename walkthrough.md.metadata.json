@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary": "Updated walkthrough to cover the new Telegram Bot security features. Explains the sender verification architecture, how parents can find their Telegram Chat ID by sending /start, and how unauthorized users are securely locked out.",
+  "updatedAt": "2026-05-23T14:30:59.230362800Z"
+}

@@ -1,0 +1,8 @@
+# Task Checklist
+
+- [ ] Open http://localhost:4040 in the browser
+- [ ] Determine the public forwarding URL
+- [ ] Count the requests listed in the request log
+- [ ] Determine if there are any POST requests to /webhook
+- [ ] Take a screenshot of the ngrok dashboard
+- [ ] Compile detailed description and report findings

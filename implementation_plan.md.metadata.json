@@ -1,0 +1,6 @@
+{
+  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
+  "summary": "Implementation plan to secure the Telegram Bot. Exposes samiraChatId and cherifChatId in the Web IHM Settings Card. Restricts Telegram message handlers to only respond to these registered Chat IDs. Provides a secure fallback for /start to display the user's Chat ID for setup.",
+  "updatedAt": "2026-05-23T14:27:57.266466900Z",
+  "requestFeedback": true
+}

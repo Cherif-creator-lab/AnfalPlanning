@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anfal Planning - Garde d'Enfant Sans Contact</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="glass-bg"></div>
+
+  <div class="container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-area">
+        <div class="logo-icon">
+          <i data-lucide="shield-check"></i>
+        </div>
+        <div>
+          <h1>Anfal Planning</h1>
+          <p class="subtitle">Système de garde d'enfant 100% factuel</p>
+        </div>
+      </div>
+      <div class="user-profile">
+        <div class="avatar">C</div>
+        <div class="profile-info">
+          <span class="user-name">Chérif (Père)</span>
+          <span class="user-role">Administrateur</span>
+        </div>
+        <a href="/logout" class="btn-logout" title="Se déconnecter">🚪</a>
+      </div>
+    </header>
+    <!-- Main Grid Dashboard -->
+    <main class="dashboard-grid">
+      <div class="dashboard-sidebar">
+        <!-- Section Formulaire de Planification -->
+        <section class="card form-card">
+          <div class="card-header">
+            <div class="header-icon primary">
+              <i data-lucide="calendar-plus"></i>
+            </div>
+            <h2>Nouveau Créneau</h2>
+          </div>
+          <p class="card-description">Planifiez la garde d'Anfal (7 ans). Samira sera notifiée sur Telegram avec les options <b>Valider</b> ou <b>Refuser / Contre-proposer</b>.</p>
+
+          <form id="planning-form" class="planning-form">
+
+            <!-- Récupération à l'école -->
+            <div class="form-section-label">
+              <i data-lucide="school"></i>
+              <span>Récupération à l'école</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="pickup-date">
+                  <i data-lucide="calendar"></i> Date de récupération
+                </label>
+                <input type="date" id="pickup-date" required>
+              </div>
+              <div class="form-group">
+                <label for="pickup-time">
+                  <i data-lucide="clock"></i> Heure de récupération
+                </label>
+                <select id="pickup-time" required>
+                  <option value="16:00">16:00</option>
+                  <option value="16:30" selected>16:30 (Standard)</option>
+                  <option value="17:00">17:00</option>
+                  <option value="17:30">17:30</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Dépôt à la garderie -->
+            <div class="form-section-label" style="margin-top: 12px;">
+              <i data-lucide="baby"></i>
+              <span>Dépôt à la garderie</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="dropoff-date">
+                  <i data-lucide="calendar"></i> Date de dépôt
+                </label>
+                <input type="date" id="dropoff-date" required>
+              </div>
+              <div class="form-group">
+                <label for="dropoff-time">
+                  <i data-lucide="clock"></i> Heure de dépôt
+                </label>
+                <select id="dropoff-time" required>
+                  <option value="17:30">17:30</option>
+                  <option value="18:00" selected>18:00 (Standard)</option>
+                  <option value="18:30">18:30</option>
+                  <option value="19:00">19:00</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btn-submit">
+              <span>Envoyer la demande à Samira</span>
+              <i data-lucide="send"></i>
+            </button>
+          </form>
+        </section>
+
+        <!-- Section Configuration des Emails & Sécurité Telegram -->
+        <section class="card settings-card" style="margin-top: 2rem;">
+          <div class="card-header">
+            <div class="header-icon secondary">
+              <i data-lucide="shield-check"></i>
+            </div>
+            <h2>Configuration & Sécurité</h2>
+          </div>
+          <p class="card-description">Renseignez vos e-mails de notification et vos identifiants Telegram (Chat ID) pour restreindre l'accès de sécurité.</p>
+
+          <form id="settings-form" class="planning-form">
+            <div class="form-group">
+              <label for="pere-email">
+                <i data-lucide="mail"></i> E-mail du Père (Chérif)
+              </label>
+              <input type="email" id="pere-email" placeholder="cherif@example.com">
+            </div>
+
+            <div class="form-group">
+              <label for="mere-email">
+                <i data-lucide="mail"></i> E-mail de la Mère (Samira)
+              </label>
+              <input type="email" id="mere-email" placeholder="samira@example.com">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cherif-chat-id">
+                  <i data-lucide="user"></i> ID Telegram Père
+                </label>
+                <input type="text" id="cherif-chat-id" placeholder="ex: 123456789">
+              </div>
+              <div class="form-group">
+                <label for="samira-chat-id">
+                  <i data-lucide="user"></i> ID Telegram Mère
+                </label>
+                <input type="text" id="samira-chat-id" placeholder="ex: 5894275789">
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-secondary" id="btn-save-settings">
+              <span>Sauvegarder les paramètres</span>
+              <i data-lucide="save"></i>
+            </button>
+          </form>
+        </section>
+      </div>
+
+      <!-- Section Tableau de Suivi en Temps Réel -->
+      <section class="card list-card">
+        <div class="card-header">
+          <div class="header-icon secondary">
+            <i data-lucide="list-todo"></i>
+          </div>
+          <h2>Créneaux Planifiés</h2>
+          <span class="badge badge-info" id="slot-count">0 créneaux</span>
+        </div>
+
+        <div class="api-status-banner" id="api-status-banner">
+          <i data-lucide="info"></i>
+          <span>Mise à jour automatique toutes les 4 secondes.</span>
+        </div>
+
+        <div class="slots-container" id="slots-container">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Chargement des créneaux...</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer-info">
+      <p>Anfal Planning Bot v2.0 &copy; 2026 - Communication sereine, objective et respectueuse.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

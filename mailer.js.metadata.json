@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_OTHER",
+  "summary": "Creation of mailer.js which defines the sendValidationEmail function. Supports actual SMTP sending via Nodemailer and simulation fallback.",
+  "updatedAt": "2026-05-23T14:22:12.506290100Z"
+}

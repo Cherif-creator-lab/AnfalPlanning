@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — Anfal Planning</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #131b2e;
+      --card-bg: rgba(20, 30, 54, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: rgba(99, 102, 241, 0.15);
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.1);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --font-title: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius-lg: 20px;
+      --radius-md: 12px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Blobs décoratifs */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+      top: -150px; left: -150px;
+    }
+    .blob-2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+      bottom: -100px; right: -100px;
+    }
+
+    /* Carte de login */
+    .login-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      margin: 1.5rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: 2.5rem;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* Logo / En-tête */
+    .login-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .logo-shield {
+      width: 64px;
+      height: 64px;
+      background: var(--primary-light);
+      border: 1px solid rgba(99, 102, 241, 0.35);
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.2);
+      animation: pulse-glow 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.2); }
+      50%       { box-shadow: 0 0 40px rgba(99, 102, 241, 0.4); }
+    }
+
+    .login-logo h1 {
+      font-family: var(--font-title);
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .login-logo p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+
+    /* Séparateur */
+    .divider {
+      height: 1px;
+      background: var(--card-border);
+      margin-bottom: 1.75rem;
+    }
+
+    /* Formulaire */
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .input-wrapper {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--card-border);
+      padding: 0.85rem 1rem 0.85rem 2.75rem;
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.06);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    /* Afficher/masquer mot de passe */
+    .toggle-pw {
+      position: absolute;
+      right: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 1rem;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.2s;
+    }
+    .toggle-pw:hover { color: var(--text-main); }
+
+    /* Message d'erreur */
+    .error-msg {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--danger-light);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      color: #f87171;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%       { transform: translateX(-6px); }
+      40%       { transform: translateX(6px); }
+      60%       { transform: translateX(-4px); }
+      80%       { transform: translateX(4px); }
+    }
+
+    /* Bouton connexion */
+    .btn-login {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-title);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.25rem;
+    }
+
+    .btn-login:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-login:active { transform: translateY(0); }
+
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Badge de sécurité en bas */
+    .security-note {
+      margin-top: 1.5rem;
+      text-align: center;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="logo-shield">🛡️</div>
+      <div>
+        <h1>Anfal Planning</h1>
+        <p>Espace sécurisé — Accès réservé</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <form class="login-form" id="login-form" method="POST" action="/login">
+
+      <!-- Message d'erreur (affiché si échec) -->
+      <div class="error-msg" id="error-box" style="display:none;">
+        <span>🔒</span>
+        <span id="error-text">Identifiants incorrects.</span>
+      </div>
+
+      <!-- Identifiant -->
+      <div class="form-group">
+        <label for="username">Identifiant</label>
+        <div class="input-wrapper">
+          <span class="input-icon">👤</span>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Votre identifiant"
+            required
+            autocomplete="username"
+          >
+        </div>
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <div class="input-wrapper">
+          <span class="input-icon">🔑</span>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Votre mot de passe"
+            required
+            autocomplete="current-password"
+          >
+          <button type="button" class="toggle-pw" id="toggle-pw" title="Afficher/masquer">
+            👁️
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-login" id="btn-login">
+        <span>🔓</span>
+        <span>Se connecter</span>
+      </button>
+    </form>
+
+    <div class="security-note">
+      🔐 Connexion chiffrée — Session sécurisée
+    </div>
+  </div>
+
+  <script>
+    // Afficher/masquer le mot de passe
+    document.getElementById('toggle-pw').addEventListener('click', () => {
+      const pw = document.getElementById('password');
+      const btn = document.getElementById('toggle-pw');
+      if (pw.type === 'password') {
+        pw.type = 'text';
+        btn.textContent = '🙈';
+      } else {
+        pw.type = 'password';
+        btn.textContent = '👁️';
+      }
+    });
+
+    // Vérifier si erreur dans l'URL (?error=1)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error')) {
+      const box = document.getElementById('error-box');
+      box.style.display = 'flex';
+      if (params.get('error') === 'locked') {
+        document.getElementById('error-text').textContent =
+          'Trop de tentatives. Réessayez dans 15 minutes.';
+      } else {
+        document.getElementById('error-text').textContent =
+          'Identifiant ou mot de passe incorrect.';
+      }
+    }
+
+    // Désactiver le bouton pendant la soumission
+    document.getElementById('login-form').addEventListener('submit', (e) => {
+      const btn = document.getElementById('btn-login');
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳</span><span>Vérification...</span>';
+    });
+  </script>
+</body>
+</html>

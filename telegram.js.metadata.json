@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_OTHER",
+  "summary": "telegram.js complet en mode POLLING. Plus aucun webhook, plus aucun tunnel requis. Le bot va chercher les messages directement chez Telegram.",
+  "updatedAt": "2026-05-23T14:12:33.199675800Z"
+}

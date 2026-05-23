@@ -1,0 +1,21 @@
+{
+  "name": "anfal-planning",
+  "version": "1.0.0",
+  "description": "Système d'automatisation de planification de garde d'enfant pour Chérif & Samira",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-session": "^1.19.0",
+    "node-telegram-bot-api": "^0.67.0",
+    "nodemailer": "^8.0.7"
+  },
+  "keywords": [],
+  "author": "Chérif",
+  "license": "ISC"
+}

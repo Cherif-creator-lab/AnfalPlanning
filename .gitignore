@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Local database files (contains private dates and emails)
+slots.json
+settings.json
+
+# Security keys, secrets, and private credentials
+.env
+
+# Temporary and generated files
+.system_generated/
+.tempmediaStorage/
+scratch/
+*.log
+*.png
+*.webp

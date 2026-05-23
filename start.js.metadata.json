@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_OTHER",
+  "summary": "Script de démarrage qui lance le tunnel ET le serveur, et met à jour le webhook Telegram automatiquement dès que la nouvelle URL est connue.",
+  "updatedAt": "2026-05-23T13:45:18.948284Z"
+}
