@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const mereEmailIn  = document.getElementById('mere-email');
   const cherifChatIdIn = document.getElementById('cherif-chat-id');
   const samiraChatIdIn = document.getElementById('samira-chat-id');
+  const groupeChatIdIn = document.getElementById('groupe-chat-id');
   const btnSaveSettings = document.getElementById('btn-save-settings');
 
   async function fetchSettings() {
@@ -43,6 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mereEmailIn.value = settings.mereEmail || '';
         cherifChatIdIn.value = settings.cherifChatId || '';
         samiraChatIdIn.value = settings.samiraChatId || '';
+        groupeChatIdIn.value = settings.groupeChatId || '';
       }
     } catch (error) {
       console.error('Erreur chargement paramètres:', error);
@@ -57,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mereEmail = mereEmailIn.value.trim();
     const cherifChatId = cherifChatIdIn.value.trim();
     const samiraChatId = samiraChatIdIn.value.trim();
+    const groupeChatId = groupeChatIdIn.value.trim();
 
     btnSaveSettings.disabled = true;
     const originalHTML = btnSaveSettings.innerHTML;
@@ -66,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const response = await fetch('/api/settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pereEmail, mereEmail, cherifChatId, samiraChatId })
+        body: JSON.stringify({ pereEmail, mereEmail, cherifChatId, samiraChatId, groupeChatId })
       });
 
       if (!response.ok) throw new Error('Erreur lors de la sauvegarde');

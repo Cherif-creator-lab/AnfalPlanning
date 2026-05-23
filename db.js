@@ -97,7 +97,8 @@ async function initSettings() {
       pereEmail: '',
       mereEmail: '',
       cherifChatId: '',
-      samiraChatId: process.env.TELEGRAM_SAMIRA_CHAT_ID || ''
+      samiraChatId: process.env.TELEGRAM_SAMIRA_CHAT_ID || '',
+      groupeChatId: ''
     };
     await fs.writeFile(SETTINGS_FILE, JSON.stringify(defaultSettings, null, 2));
   }
@@ -117,6 +118,10 @@ async function getSettings() {
   }
   if (settings.samiraChatId === undefined) {
     settings.samiraChatId = process.env.TELEGRAM_SAMIRA_CHAT_ID || '';
+    changed = true;
+  }
+  if (settings.groupeChatId === undefined) {
+    settings.groupeChatId = '';
     changed = true;
   }
   

@@ -111,9 +111,9 @@ app.post('/api/slots', requireAuth, async (req, res) => {
       return res.status(400).json({ error: "Tous les champs sont requis." });
     }
 
-    // Charger dynamiquement l'ID Telegram de destination depuis la configuration IHM
+    // Charger dynamiquement l'ID Telegram de destination depuis la configuration IHM (priorité au groupe)
     const settings = await db.getSettings();
-    const targetChatId = settings.samiraChatId || SAMIRA_CHAT_ID;
+    const targetChatId = settings.groupeChatId || settings.samiraChatId || SAMIRA_CHAT_ID;
 
     const slot = await db.addSlot({ pickupDate, pickupTime, dropoffDate, dropoffTime });
 
@@ -150,8 +150,8 @@ app.get('/api/settings', requireAuth, async (req, res) => {
 
 app.post('/api/settings', requireAuth, async (req, res) => {
   try {
-    const { pereEmail, mereEmail, cherifChatId, samiraChatId } = req.body;
-    const settings = await db.saveSettings({ pereEmail, mereEmail, cherifChatId, samiraChatId });
+    const { pereEmail, mereEmail, cherifChatId, samiraChatId, groupeChatId } = req.body;
+    const settings = await db.saveSettings({ pereEmail, mereEmail, cherifChatId, samiraChatId, groupeChatId });
     res.json({ message: "Paramètres sauvegardés", settings });
   } catch (e) {
     res.status(500).json({ error: "Erreur enregistrement paramètres" });
