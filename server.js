@@ -110,12 +110,17 @@ app.post('/api/slots', requireAuth, async (req, res) => {
     if (!pickupDate || !pickupTime || !dropoffDate || !dropoffTime) {
       return res.status(400).json({ error: "Tous les champs sont requis." });
     }
+
+    // Charger dynamiquement l'ID Telegram de destination depuis la configuration IHM
+    const settings = await db.getSettings();
+    const targetChatId = settings.samiraChatId || SAMIRA_CHAT_ID;
+
     const slot = await db.addSlot({ pickupDate, pickupTime, dropoffDate, dropoffTime });
 
     let msgSent = false;
-    if (SAMIRA_CHAT_ID) {
+    if (targetChatId) {
       try {
-        const result = await telegram.sendPlanningButtons(SAMIRA_CHAT_ID, slot);
+        const result = await telegram.sendPlanningButtons(targetChatId, slot);
         if (result && result.message_id) {
           await db.updateSlotStatus(slot.id, 'PENDING', `tg_${result.message_id}`);
           slot.telegramMsgId = result.message_id;
@@ -124,6 +129,8 @@ app.post('/api/slots', requireAuth, async (req, res) => {
       } catch (tgErr) {
         console.error("⚠️ Envoi Telegram échoué:", tgErr.message);
       }
+    } else {
+      console.warn("⚠️ Impossible d'envoyer sur Telegram : aucun ID Mère configuré dans l'IHM.");
     }
     res.status(201).json({ message: "Créneau planifié", slot, telegramSent: msgSent });
   } catch (e) {
