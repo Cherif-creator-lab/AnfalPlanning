@@ -267,15 +267,40 @@ async function sendValidationEmail(slot, settings) {
   if (useRealSmtp) {
     console.log(`✉️ Tentative d'envoi d'e-mail réel à : ${toHeader}`);
     try {
-      const transporter = nodemailer.createTransport({
-        host: SMTP_HOST,
-        port: SMTP_PORT,
-        secure: SMTP_SECURE,
-        auth: {
-          user: SMTP_USER,
-          pass: SMTP_PASS
-        }
-      });
+      let transportOpts;
+      
+      // Si c'est Gmail, on utilise le raccourci Nodemailer 100% robuste
+      if (SMTP_HOST && SMTP_HOST.toLowerCase().includes('gmail.com')) {
+        console.log("💡 Utilisation du service raccourci Gmail.");
+        transportOpts = {
+          service: 'gmail',
+          auth: {
+            user: SMTP_USER,
+            pass: SMTP_PASS
+          },
+          connectionTimeout: 10000, // Timeout de 10s pour éviter de figer
+          greetingTimeout: 10000,
+          socketTimeout: 10000
+        };
+      } else {
+        // Détection automatique du SSL/TLS sécurisé sur le port 465
+        const isSecure = SMTP_PORT === 465 || SMTP_SECURE;
+        console.log(`💡 SMTP Config - Hôte: ${SMTP_HOST}, Port: ${SMTP_PORT}, Sécurisé: ${isSecure}`);
+        transportOpts = {
+          host: SMTP_HOST,
+          port: SMTP_PORT,
+          secure: isSecure,
+          auth: {
+            user: SMTP_USER,
+            pass: SMTP_PASS
+          },
+          connectionTimeout: 10000, // Timeout de 10s pour éviter de figer
+          greetingTimeout: 10000,
+          socketTimeout: 10000
+        };
+      }
+
+      const transporter = nodemailer.createTransport(transportOpts);
 
       const info = await transporter.sendMail({
         from: `"Anfal Planning" <${SMTP_USER}>`,
