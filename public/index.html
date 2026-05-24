@@ -108,6 +108,31 @@
           </form>
         </section>
 
+        <!-- Section Diffusion Telegram (Broadcast) -->
+        <section class="card broadcast-card" style="margin-top: 2rem;">
+          <div class="card-header">
+            <div class="header-icon primary" style="background: rgba(99, 102, 241, 0.15); color: #6366f1;">
+              <i data-lucide="megaphone"></i>
+            </div>
+            <h2>Diffusion Telegram</h2>
+          </div>
+          <p class="card-description">Envoyez instantanément un message à tous les utilisateurs enregistrés (ceux qui ont démarré le bot avec <b>/start</b> ou interagi avec).</p>
+
+          <form id="broadcast-form" class="planning-form">
+            <div class="form-group">
+              <label for="broadcast-message">
+                <i data-lucide="message-square"></i> Message à diffuser
+              </label>
+              <textarea id="broadcast-message" rows="4" placeholder="Saisissez votre message de diffusion..." style="width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 10px; background: rgba(255, 255, 255, 0.05); color: var(--text-main); font-family: inherit; resize: vertical;" required></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="btn-send-broadcast" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+              <span>Diffuser le message</span>
+              <i data-lucide="megaphone"></i>
+            </button>
+          </form>
+        </section>
+
         <!-- Section Configuration des Emails & Sécurité Telegram -->
         <section class="card settings-card" style="margin-top: 2rem;">
           <div class="card-header">

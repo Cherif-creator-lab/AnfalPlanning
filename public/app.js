@@ -127,6 +127,48 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ── Diffusion Telegram (Broadcast) ──────────────────────────────────────
+  const broadcastForm = document.getElementById('broadcast-form');
+  const broadcastMessageIn = document.getElementById('broadcast-message');
+  const btnSendBroadcast = document.getElementById('btn-send-broadcast');
+
+  broadcastForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = broadcastMessageIn.value.trim();
+    if (!message) return;
+
+    btnSendBroadcast.disabled = true;
+    const originalHTML = btnSendBroadcast.innerHTML;
+    btnSendBroadcast.innerHTML = '<span>Diffusion...</span><div class="spinner" style="width:16px;height:16px;"></div>';
+
+    try {
+      const response = await fetch('/api/broadcast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Erreur lors de la diffusion');
+
+      // Feedback visuel de succès temporaire
+      btnSendBroadcast.innerHTML = `<span>Diffusé ! ✅ (${data.sentCount})</span>`;
+      broadcastMessageIn.value = '';
+
+      setTimeout(() => {
+        btnSendBroadcast.innerHTML = originalHTML;
+        btnSendBroadcast.disabled = false;
+        lucide.createIcons();
+      }, 3000);
+
+    } catch (error) {
+      alert(`⚠️ Erreur de diffusion : ${error.message}`);
+      btnSendBroadcast.disabled = false;
+      btnSendBroadcast.innerHTML = originalHTML;
+      lucide.createIcons();
+    }
+  });
+
   // ── Récupération des créneaux ────────────────────────────────────────────
   async function fetchSlots() {
     try {

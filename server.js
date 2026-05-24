@@ -158,6 +158,43 @@ app.post('/api/settings', requireAuth, async (req, res) => {
   }
 });
 
+app.post('/api/broadcast', requireAuth, async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (!message || !message.trim()) {
+      return res.status(400).json({ error: "Le message ne peut pas être vide." });
+    }
+
+    const users = await db.getRegisteredUsers();
+    if (users.length === 0) {
+      return res.json({ success: true, sentCount: 0, message: "Aucun utilisateur Telegram n'a encore fait /start." });
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const user of users) {
+      try {
+        await telegram.sendTextMessage(user.chatId, message);
+        successCount++;
+      } catch (err) {
+        console.error(`❌ Échec envoi de la diffusion à ${user.firstName} (${user.chatId}) :`, err.message);
+        failCount++;
+      }
+    }
+
+    res.json({
+      success: true,
+      sentCount: successCount,
+      failCount: failCount,
+      message: `Message diffusé avec succès à ${successCount} utilisateur(s).${failCount > 0 ? ` (Échec pour ${failCount})` : ''}`
+    });
+  } catch (e) {
+    console.error("Erreur lors de la diffusion :", e);
+    res.status(500).json({ error: "Erreur serveur lors de la diffusion." });
+  }
+});
+
 
 // ══════════════════════════════════════════════════════════════════════════════
 //  TELEGRAM — Handlers (appelés par le polling, PAS par un webhook)
@@ -170,39 +207,24 @@ async function handleTelegramMessage(msg) {
 
   console.log(`📨 Message Telegram de ${firstName} (${chatId}) : "${text}"`);
 
-  // Charger les paramètres actuels
-  const settings = await db.getSettings();
-  const isSamira = settings.samiraChatId && chatId === String(settings.samiraChatId);
-  const isCherif = settings.cherifChatId && chatId === String(settings.cherifChatId);
+  // Enregistrer automatiquement l'utilisateur
+  const isNew = await db.registerUser(chatId, firstName, msg.from.username);
+  if (isNew) {
+    console.log(`👤 Nouvel utilisateur Telegram enregistré : ${firstName} (${chatId})`);
+  }
 
-  // /start → Permet de connaître son identifiant
+  // /start → Message d'accueil chaleureux général
   if (text === '/start') {
-    if (isSamira || isCherif) {
-      await telegram.sendTextMessage(chatId,
-        `✅ <b>Bonjour ${firstName} !</b>\n\n` +
-        `Votre accès est autorisé dans le système de planning d'Anfal.\n\n` +
-        `Vous recevrez ici les notifications de planning.\n\n` +
-        `<i>Robot-Planning Anfal</i>`
-      );
-    } else {
-      await telegram.sendTextMessage(chatId,
-        `🔒 <b>Accès Privé - Robot-Planning Anfal</b>\n\n` +
-        `Bonjour ${firstName}. Pour des raisons de sécurité, ce bot est privé.\n\n` +
-        `Votre identifiant Telegram (Chat ID) est :\n` +
-        `<code>${chatId}</code>\n\n` +
-        `👉 Veuillez copier cet identifiant et le renseigner sur votre tableau de bord web dans la section <b>Emails & Sécurité Telegram</b> pour autoriser votre accès.`
-      );
-    }
+    await telegram.sendTextMessage(chatId,
+      `✅ <b>Bonjour ${firstName} !</b>\n\n` +
+      `Vous êtes bien enregistré(e) dans le système de planning d'Anfal.\n\n` +
+      `Vous recevrez ici les notifications et mises à jour importantes concernant la garde.\n\n` +
+      `<i>Robot-Planning Anfal</i>`
+    );
     return;
   }
 
-  // Filtrage d'accès strict pour tous les autres messages
-  if (!isSamira && !isCherif) {
-    console.warn(`🔒 Message de l'utilisateur non autorisé ignoré : ${firstName} (${chatId})`);
-    return;
-  }
-
-  // Contre-proposition en attente
+  // Contre-proposition en attente (plus de filtrage d'accès restrictif)
   if (waitingForCounterProposal.has(chatId)) {
     const slotId = waitingForCounterProposal.get(chatId);
     waitingForCounterProposal.delete(chatId);
@@ -233,16 +255,9 @@ async function handleTelegramCallback(query) {
 
   console.log(`🔘 Callback : "${callbackData}" de ${chatId}`);
 
-  // Vérifier la sécurité et l'autorisation de l'utilisateur
-  const settings = await db.getSettings();
-  const isSamira = settings.samiraChatId && chatId === String(settings.samiraChatId);
-  const isCherif = settings.cherifChatId && chatId === String(settings.cherifChatId);
-
-  if (!isSamira && !isCherif) {
-    console.warn(`🔒 Clic Telegram Callback rejeté de l'utilisateur non autorisé : ${chatId}`);
-    await telegram.answerCallbackQuery(query.id, '⚠️ Accès non autorisé !');
-    return;
-  }
+  // Enregistrer automatiquement l'utilisateur qui clique sur le bouton s'il ne l'est pas déjà
+  const clickerName = query.from.first_name || 'Utilisateur';
+  await db.registerUser(chatId, clickerName, query.from.username);
 
   const parts = callbackData.split('_');
   if (parts.length < 2) return;

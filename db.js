@@ -98,7 +98,8 @@ async function initSettings() {
       mereEmail: '',
       cherifChatId: '',
       samiraChatId: process.env.TELEGRAM_SAMIRA_CHAT_ID || '',
-      groupeChatId: ''
+      groupeChatId: '',
+      registeredUsers: []
     };
     await fs.writeFile(SETTINGS_FILE, JSON.stringify(defaultSettings, null, 2));
   }
@@ -124,6 +125,10 @@ async function getSettings() {
     settings.groupeChatId = '';
     changed = true;
   }
+  if (settings.registeredUsers === undefined) {
+    settings.registeredUsers = [];
+    changed = true;
+  }
   
   if (changed) {
     await saveSettings(settings);
@@ -138,6 +143,32 @@ async function saveSettings(settings) {
   return settings;
 }
 
+// Enregistre un utilisateur Telegram automatiquement
+async function registerUser(chatId, firstName, username = '') {
+  const settings = await getSettings();
+  if (!settings.registeredUsers) {
+    settings.registeredUsers = [];
+  }
+  const alreadyRegistered = settings.registeredUsers.some(u => String(u.chatId) === String(chatId));
+  if (!alreadyRegistered) {
+    settings.registeredUsers.push({
+      chatId: String(chatId),
+      firstName,
+      username: username || '',
+      registeredAt: new Date().toISOString()
+    });
+    await saveSettings(settings);
+    return true;
+  }
+  return false;
+}
+
+// Récupère la liste de tous les utilisateurs enregistrés
+async function getRegisteredUsers() {
+  const settings = await getSettings();
+  return settings.registeredUsers || [];
+}
+
 module.exports = {
   getSlots,
   addSlot,
@@ -145,5 +176,7 @@ module.exports = {
   saveCounterProposal,
   getSlot,
   getSettings,
-  saveSettings
+  saveSettings,
+  registerUser,
+  getRegisteredUsers
 };
